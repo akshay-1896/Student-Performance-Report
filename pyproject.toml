@@ -1,0 +1,11 @@
+[project]
+name = "student-performance-predictor"
+version = "0.0.1"
+description = "ML-Based Student Performance Predictor Using Exam & Lifestyle Data"
+authors = [{name = "Student Performance Team", email = "team@example.com"}]
+
+[tool.setuptools]
+packages = {find = {}}
+
+[tool.setuptools.dynamic]
+dependencies = {file = "requirements.txt"}

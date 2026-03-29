@@ -1,0 +1,40 @@
+columns:
+  - id: int
+  - Study_Hours: float
+  - Sleep_Hours: float
+  - Attendance_Percentage: float
+  - Previous_Score: float
+  - Internet_Usage: float
+  - Social_Activity_Level: int
+  - Performance_Score: float
+  - Pass_Fail: int
+
+numerical_columns:
+  - Study_Hours
+  - Sleep_Hours
+  - Attendance_Percentage
+  - Previous_Score
+  - Internet_Usage
+  - Social_Activity_Level
+  - Performance_Score
+  - Pass_Fail
+
+categorical_columns: []
+
+drop_columns:
+  - id
+  - Performance_Score
+
+# For data transformation
+num_features:
+  - Study_Hours
+  - Sleep_Hours
+  - Attendance_Percentage
+  - Previous_Score
+  - Internet_Usage
+  - Social_Activity_Level
+
+mm_columns: []
+
+# Pass threshold for prediction
+pass_threshold: 0.4

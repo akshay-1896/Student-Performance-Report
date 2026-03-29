@@ -1,0 +1,58 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.egg-info
+.eggs
+dist
+build
+*.egg
+
+# Virtual environments
+venv
+.venv
+env/
+ENV/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Jupyter
+.ipynb_checkpoints
+.ipynb
+
+# Testing
+.pytest_cache
+.coverage
+htmlcov/
+
+# Logs
+logs
+*.log
+
+# Artifacts (generated at runtime)
+artifact/
+data/
+prediction_history.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.local
+*.pem
+config/MongoDB_configurations.txt
+config/AWS_configurations.txt
+
+# Documentation
+*.md
+!README.md

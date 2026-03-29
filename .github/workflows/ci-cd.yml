@@ -1,0 +1,124 @@
+# ============================================================
+# CI/CD Pipeline for Student Performance Predictor
+# ============================================================
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: '3.10'
+  DOCKER_IMAGE: student-performance-predictor
+
+jobs:
+  # ============================================================
+  # Lint and Test Job
+  # ============================================================
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache pip packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 black isort
+          pip install -r requirements.txt
+
+      - name: Lint with flake8
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Check code formatting with black
+        run: |
+          black --check .
+
+      - name: Check imports with isort
+        run: |
+          isort --check-only .
+
+      - name: Run demo script (basic functionality test)
+        run: |
+          python demo.py
+
+  # ============================================================
+  # Docker Build and Push Job
+  # ============================================================
+  docker-build:
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: ${{ env.DOCKER_IMAGE }}:latest
+          load: true
+
+      - name: Test Docker container
+        run: |
+          docker run -d --name test-app -p 5000:5000 ${{ env.DOCKER_IMAGE }}:latest
+          sleep 10
+          docker logs test-app
+          docker rm -f test-app
+
+  # ============================================================
+  # Deploy to AWS ECS (Optional - customize as needed)
+  # ============================================================
+  deploy:
+    needs: docker-build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and Push to ECR
+        run: |
+          docker build -t ${{ secrets.ECR_REGISTRY }}/student-performance-predictor:${{ github.sha }} .
+          docker push ${{ secrets.ECR_REGISTRY }}/student-performance-predictor:${{ github.sha }}
+          docker push ${{ secrets.ECR_REGISTRY }}/student-performance-predictor:latest
+
+      - name: Update ECS Service
+        run: |
+          aws ecs update-service --cluster student-performance-cluster --service student-performance-predictor --force-new-deployment

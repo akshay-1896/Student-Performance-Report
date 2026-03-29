@@ -1,0 +1,13 @@
+# Model Configuration for Student Performance Predictor
+
+model_type: RandomForestClassifier
+
+parameters:
+  n_estimators: 100
+  min_samples_split: 5
+  min_samples_leaf: 2
+  max_depth: null
+  criterion: gini
+  random_state: 42
+
+expected_accuracy: 0.6

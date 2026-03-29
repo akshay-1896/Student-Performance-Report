@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance Predictor</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Additional styles for enhanced UI */
+        .container {
+            max-width: 900px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .prediction-result {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 20px;
+            margin-top: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .result-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .result-circle.pass {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .result-circle.fail {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        }
+
+        .probability-bar {
+            width: 100%;
+            max-width: 300px;
+            margin: 10px 0;
+        }
+
+        .bar-container {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 25px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .bar-fill.pass-bar {
+            background: linear-gradient(90deg, #11998e, #38ef7d);
+        }
+
+        .bar-fill.fail-bar {
+            background: linear-gradient(90deg, #eb3349, #f45c43);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .history-table th, .history-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .history-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .history-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-badge.pass {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.fail {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+            .prediction-result {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Performance Predictor</h1>
+        <p class="subtitle">ML-Based Prediction with Interactive Dashboard</p>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('predict')">Predict</button>
+            <button class="tab" onclick="showTab('history')">History</button>
+            <button class="tab" onclick="showTab('about')">About</button>
+        </div>
+
+        <!-- Prediction Tab -->
+        <div id="predict-tab" class="tab-content active">
+            <form id="predictionForm">
+                <div class="input-group">
+                    <div>
+                        <label for="Study_Hours">Study Hours (per day):</label>
+                        <input type="number" id="Study_Hours" name="Study_Hours" step="0.1" min="0" max="24" placeholder="e.g., 4.5" required>
+                    </div>
+
+                    <div>
+                        <label for="Sleep_Hours">Sleep Hours (per day):</label>
+                        <input type="number" id="Sleep_Hours" name="Sleep_Hours" step="0.1" min="0" max="24" placeholder="e.g., 7.0" required>
+                    </div>
+
+                    <div>
+                        <label for="Attendance_Percentage">Attendance Percentage:</label>
+                        <input type="number" id="Attendance_Percentage" name="Attendance_Percentage" step="0.1" min="0" max="100" placeholder="e.g., 85.5" required>
+                    </div>
+
+                    <div>
+                        <label for="Previous_Score">Previous Score (%):</label>
+                        <input type="number" id="Previous_Score" name="Previous_Score" step="0.1" min="0" max="100" placeholder="e.g., 72.0" required>
+                    </div>
+
+                    <div>
+                        <label for="Internet_Usage">Internet Usage (hours per day):</label>
+                        <input type="number" id="Internet_Usage" name="Internet_Usage" step="0.1" min="0" max="24" placeholder="e.g., 3.5" required>
+                    </div>
+
+                    <div>
+                        <label for="Social_Activity_Level">Social Activity Level (1-5):</label>
+                        <input type="number" id="Social_Activity_Level" name="Social_Activity_Level" min="1" max="5" placeholder="e.g., 3" required>
+                    </div>
+                </div>
+
+                <button type="submit" id="predictBtn">Predict Performance</button>
+            </form>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="loading" id="loading"></div>
+
+            <div class="prediction-result" id="result" style="display: none;">
+                <div class="result-circle" id="resultCircle">
+                    <span id="resultText"></span>
+                </div>
+                <div>
+                    <h3>Probability</h3>
+                    <div class="probability-bar">
+                        <div>Pass Probability:</div>
+                        <div class="bar-container">
+                            <div class="bar-fill pass-bar" id="passBar" style="width: 0%"></div>
+                        </div>
+                        <span id="passPercent">0%</span>
+                    </div>
+                    <div class="probability-bar">
+                        <div>Fail Probability:</div>
+                        <div class="bar-container">
+                            <div class="bar-fill fail-bar" id="failBar" style="width: 0%"></div>
+                        </div>
+                        <span id="failPercent">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history-tab" class="tab-content">
+            <h3>Prediction History</h3>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Study</th>
+                        <th>Sleep</th>
+                        <th>Attendance</th>
+                        <th>Previous</th>
+                        <th>Internet</th>
+                        <th>Social</th>
+                        <th>Result</th>
+                        <th>Confidence</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    <tr>
+                        <td colspan="9" style="text-align: center;">No predictions yet</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- About Tab -->
+        <div id="about-tab" class="tab-content">
+            <h3>About This Model</h3>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <h4>Features Used:</h4>
+                <ul>
+                    <li><strong>Study Hours:</strong> Daily study time</li>
+                    <li><strong>Sleep Hours:</strong> Daily sleep duration</li>
+                    <li><strong>Attendance Percentage:</strong> Class attendance rate</li>
+                    <li><strong>Previous Score:</strong> Prior exam performance</li>
+                    <li><strong>Internet Usage:</strong> Daily internet hours</li>
+                    <li><strong>Social Activity Level:</strong> Social engagement (1-5)</li>
+                </ul>
+                <h4>Output:</h4>
+                <ul>
+                    <li><strong>PASS:</strong> Student is predicted to pass (score >= 40%)</li>
+                    <li><strong>FAIL:</strong> Student is predicted to fail (score < 40%)</li>
+                </ul>
+                <h4>Model:</h4>
+                <p>Random Forest Classifier with SMOTEENN for handling imbalanced data.</p>
+            </div>
+        </div>
+
+        {% if context %}
+            <div class="result">
+                <h2>{{ context }}</h2>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Remove active from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+
+            // Load history if selecting history tab
+            if (tabName === 'history') {
+                loadHistory();
+            }
+        }
+
+        // Form submission
+        document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const loading = document.getElementById('loading');
+            const errorMsg = document.getElementById('errorMessage');
+            const result = document.getElementById('result');
+
+            // Show loading, hide previous results
+            loading.style.display = 'block';
+            errorMsg.style.display = 'none';
+            result.style.display = 'none';
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                loading.style.display = 'none';
+
+                if (!data.status) {
+                    errorMsg.textContent = data.error || 'An error occurred';
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
+                // Show result
+                result.style.display = 'flex';
+
+                const resultCircle = document.getElementById('resultCircle');
+                const resultText = document.getElementById('resultText');
+
+                if (data.prediction === 'PASS') {
+                    resultCircle.className = 'result-circle pass';
+                    resultText.textContent = 'PASS';
+                } else {
+                    resultCircle.className = 'result-circle fail';
+                    resultText.textContent = 'FAIL';
+                }
+
+                // Update probability bars
+                document.getElementById('passBar').style.width = data.probability.pass;
+                document.getElementById('failBar').style.width = data.probability.fail;
+                document.getElementById('passPercent').textContent = data.probability.pass;
+                document.getElementById('failPercent').textContent = data.probability.fail;
+
+            } catch (error) {
+                loading.style.display = 'none';
+                errorMsg.textContent = 'An error occurred: ' + error.message;
+                errorMsg.style.display = 'block';
+            }
+        });
+
+        // Load history
+        async function loadHistory() {
+            try {
+                const response = await fetch('/history');
+                const history = await response.json();
+
+                const tbody = document.getElementById('historyTableBody');
+
+                if (!history || history.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">No predictions yet</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = history.map(entry => `
+                    <tr>
+                        <td>${entry.timestamp}</td>
+                        <td>${entry.input.Study_Hours}</td>
+                        <td>${entry.input.Sleep_Hours}</td>
+                        <td>${entry.input.Attendance_Percentage}%</td>
+                        <td>${entry.input.Previous_Score}%</td>
+                        <td>${entry.input.Internet_Usage}</td>
+                        <td>${entry.input.Social_Activity_Level}</td>
+                        <td><span class="status-badge ${entry.prediction.toLowerCase()}">${entry.prediction}</span></td>
+                        <td>${entry.probability}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        // Load initial history on page load
+        loadHistory();
+    </script>
+</body>
+</html>
