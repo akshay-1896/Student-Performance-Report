@@ -16,7 +16,7 @@ np.random.seed(42)
 random.seed(42)
 
 # Configuration
-NUM_STUDENTS = 15000  # Large dataset for better model training
+NUM_STUDENTS = 55000  # Large dataset for better model training
 PASS_THRESHOLD = 0.40  # 40% threshold as specified by user
 
 def generate_student_data():
@@ -73,79 +73,82 @@ def generate_student_data():
     # This creates natural correlations between features and outcomes
 
     performance_scores = np.zeros(NUM_STUDENTS)
+    pass_fail = np.zeros(NUM_STUDENTS, dtype=int)
 
     for i in range(NUM_STUDENTS):
         # Calculate score based on multiple factors with weights
+        # Adjusted to create a more balanced pass/fail distribution (~60-65% pass rate)
 
-        # Study hours contribution (30%) - most important factor
-        study_score = (study_hours[i] / 12) * 100
+        # Study hours contribution (25%) - important but not everything
+        study_score = (study_hours[i] / 10) * 100
 
-        # Attendance contribution (25%) - important
-        attendance_score = attendance_percentage[i]
+        # Attendance contribution (20%) - important
+        attendance_score = attendance_percentage[i] * 0.7
 
         # Previous score contribution (30%) - strong predictor
-        previous_contribution = previous_score[i]
+        previous_contribution = previous_score[i] * 0.75
 
-        # Sleep contribution (10%) - optimal is around 7-8 hours
+        # Sleep contribution (15%) - crucial for performance
         sleep_diff = abs(sleep_hours[i] - 7.5)
-        if sleep_diff <= 1:
+        if sleep_diff <= 0.5:
+            sleep_score = 100
+        elif sleep_diff <= 1:
             sleep_score = 90
         elif sleep_diff <= 2:
             sleep_score = 75
         else:
-            sleep_score = max(50, 100 - (sleep_diff * 15))
+            sleep_score = max(40, 100 - (sleep_diff * 20))
 
-        # Internet usage (5%) - moderate is better
-        if internet_usage[i] <= 3:
-            internet_score = 85  # Moderate use for research
-        elif internet_usage[i] <= 6:
-            internet_score = 75  # Balanced
+        # Internet usage (5%) - can help or hurt
+        if internet_usage[i] <= 2:
+            internet_score = 70
+        elif internet_usage[i] <= 5:
+            internet_score = 80
         else:
-            internet_score = max(60, 85 - (internet_usage[i] - 6) * 5)
+            internet_score = max(50, 90 - (internet_usage[i] - 5) * 8)
 
-        # Social activity (5%) - some social activity is good, too much can hurt
-        if social_activity_level[i] <= 2:
-            social_score = 80
-        elif social_activity_level[i] == 3:
+        # Social activity (5%) - balanced impact
+        if social_activity_level[i] == 2 or social_activity_level[i] == 3:
             social_score = 85
+        elif social_activity_level[i] == 1:
+            social_score = 75
         else:
-            social_score = max(70, 90 - (social_activity_level[i] - 3) * 10)
+            social_score = max(60, 90 - (social_activity_level[i] - 3) * 12)
 
-        # Add some random noise to make it realistic
-        noise = np.random.normal(0, 5)
+        # Add random noise
+        noise = np.random.normal(0, 8)
 
-        # Weighted final score
+        # Weighted final score (adjusted for more balanced pass/fail)
         final_score = (
-            study_score * 0.30 +
-            attendance_score * 0.25 +
+            study_score * 0.25 +
+            attendance_score * 0.20 +
             previous_contribution * 0.30 +
-            sleep_score * 0.10 +
-            internet_score * 0.025 +
-            social_score * 0.025 +
+            sleep_score * 0.15 +
+            internet_score * 0.05 +
+            social_score * 0.05 +
             noise
         )
 
-        # Add non-linear effects
-        # Students with very high study hours get a bonus
-        if study_hours[i] > 8:
-            final_score += random.uniform(2, 8)
-
-        # Students with very low attendance get a penalty
+        # Apply penalties for poor habits
+        if study_hours[i] < 2:
+            final_score -= random.uniform(8, 15)
         if attendance_percentage[i] < 50:
-            final_score -= random.uniform(5, 15)
-
-        # Previous low performers who improved get a bonus
-        if previous_score[i] < 40 and study_hours[i] > 5:
-            final_score += random.uniform(3, 10)
-
-        # Sleep deprived students get penalty
+            final_score -= random.uniform(10, 20)
         if sleep_hours[i] < 5:
+            final_score -= random.uniform(10, 18)
+        if previous_score[i] < 30:
             final_score -= random.uniform(5, 12)
+
+        # Apply bonuses for good habits
+        if study_hours[i] > 6 and attendance_percentage[i] > 80:
+            final_score += random.uniform(3, 8)
+        if previous_score[i] > 75:
+            final_score += random.uniform(2, 6)
 
         performance_scores[i] = np.clip(final_score, 0, 100)
 
-    # Calculate pass/fail based on threshold
-    pass_fail = (performance_scores >= (PASS_THRESHOLD * 100)).astype(int)
+        # Calculate pass/fail based on threshold (40%)
+        pass_fail[i] = 1 if performance_scores[i] >= 40 else 0
 
     # Create DataFrame
     data = {
@@ -161,17 +164,16 @@ def generate_student_data():
 
     df = pd.DataFrame(data)
 
-    # Add some edge cases to make data more realistic
-    # Add students with extreme cases
+    # Add more edge cases to make data more realistic (scaled for larger dataset)
     edge_cases = pd.DataFrame({
-        'Study_Hours': [0.5, 0.8, 1.0, 10.0, 12.0, 14.0, 15.0],
-        'Sleep_Hours': [3.0, 4.0, 10.0, 11.0, 12.0, 3.5, 4.0],
-        'Attendance_Percentage': [30, 35, 95, 98, 100, 40, 45],
-        'Previous_Score': [20, 25, 90, 95, 98, 30, 35],
-        'Internet_Usage': [0, 0.5, 10.0, 11.0, 12.0, 8.0, 9.0],
-        'Social_Activity_Level': [1, 5, 1, 2, 3, 5, 4],
-        'Performance_Score': [15, 20, 88, 92, 95, 25, 30],
-        'Pass_Fail': [0, 0, 1, 1, 1, 0, 0]
+        'Study_Hours': [0.5, 0.8, 1.0, 10.0, 12.0, 14.0, 15.0, 0.5, 1.5, 8.0, 9.0, 10.0],
+        'Sleep_Hours': [3.0, 4.0, 10.0, 11.0, 12.0, 3.5, 4.0, 2.5, 3.0, 7.0, 8.0, 6.5],
+        'Attendance_Percentage': [30, 35, 95, 98, 100, 40, 45, 25, 32, 85, 90, 95],
+        'Previous_Score': [20, 25, 90, 95, 98, 30, 35, 15, 22, 70, 80, 90],
+        'Internet_Usage': [0, 0.5, 10.0, 11.0, 12.0, 8.0, 9.0, 0, 1, 5, 4, 3],
+        'Social_Activity_Level': [1, 5, 1, 2, 3, 5, 4, 1, 5, 2, 3, 2],
+        'Performance_Score': [15, 20, 88, 92, 95, 25, 30, 10, 18, 75, 82, 90],
+        'Pass_Fail': [0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1]
     })
 
     df = pd.concat([df, edge_cases], ignore_index=True)

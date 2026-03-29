@@ -49,6 +49,7 @@ class StudentData:
         logging.info("Entered get_student_data_as_dict method as StudentData class")
 
         try:
+            # Only include the 6 features the model was trained with
             input_data = {
                 "Study_Hours": [self.Study_Hours],
                 "Sleep_Hours": [self.Sleep_Hours],

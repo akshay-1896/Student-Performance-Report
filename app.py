@@ -21,12 +21,17 @@ import json
 from datetime import datetime
 import pandas as pd
 import pickle
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Importing constants and pipeline modules from the project
 from src.constants import APP_HOST, APP_PORT
 from src.pipline.prediction_pipeline import StudentData, StudentPerformanceClassifier
 from src.pipline.training_pipeline import TrainPipeline
 from src.logger import logging
+from src.data_access.mongodb_handler import get_mongodb_handler
 
 # Initialize FastAPI application
 app = FastAPI(
@@ -58,7 +63,19 @@ HISTORY_FILE = "prediction_history.json"
 
 
 def load_history():
-    """Load prediction history from JSON file"""
+    """Load prediction history - tries MongoDB first, falls back to file"""
+    # Try MongoDB first
+    mongodb = get_mongodb_handler()
+    if mongodb.is_connected():
+        history = mongodb.get_prediction_history(limit=50)
+        if history:
+            # Format for display
+            for item in history:
+                if "timestamp" in item and hasattr(item["timestamp"], "str"):
+                    item["timestamp"] = item["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
+            return history
+
+    # Fall back to local file
     if os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, 'r') as f:
             return json.load(f)
@@ -72,16 +89,35 @@ def save_history(history):
 
 
 def add_to_history(input_data, prediction, probability):
-    """Add prediction to history"""
+    """Add prediction to history - tries MongoDB first, falls back to file"""
+    # Try MongoDB first
+    mongodb = get_mongodb_handler()
+    if mongodb.is_connected():
+        entry = {
+            "input": input_data,
+            "prediction": prediction,
+            "probability": probability
+        }
+        mongodb.save_prediction(entry)
+        # Also save locally for backup
+        save_history_local(entry)
+    else:
+        # Fall back to local file
+        save_history_local({
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "input": input_data,
+            "prediction": prediction,
+            "probability": probability
+        })
+
+
+def save_history_local(entry):
+    """Save prediction to local JSON file (fallback)"""
     history = load_history()
-    entry = {
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "input": input_data,
-        "prediction": prediction,
-        "probability": probability
-    }
-    history.insert(0, entry)  # Add to beginning (newest first)
-    # Keep only last 50 predictions
+    entry_with_ts = entry.copy()
+    if "timestamp" not in entry_with_ts:
+        entry_with_ts["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    history.insert(0, entry_with_ts)
     history = history[:50]
     save_history(history)
 

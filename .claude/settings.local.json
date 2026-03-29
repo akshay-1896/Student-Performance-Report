@@ -1,7 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python generate_data.py)"
+      "Bash(python generate_data.py)",
+      "Bash(pip --version)",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(ls -la artifact/*/model_trainer/trained_model/)",
+      "Bash(ls -la artifact/*/)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :5000)",
+      "Bash(curl:*)",
+      "Bash(taskkill //F //PID 24560)",
+      "Bash(taskkill //F //PID 28604)",
+      "Bash(taskkill //F //PID 4992)"
     ]
   }
 }

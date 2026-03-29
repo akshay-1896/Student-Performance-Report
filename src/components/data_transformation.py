@@ -88,10 +88,12 @@ class DataTransformation:
             if train_df.empty or test_df.empty:
                 raise Exception("Training or testing data is empty")
 
-            input_feature_train_df = train_df.drop(columns=[TARGET_COLUMN], axis=1)
+            # Drop unnecessary columns (id and Performance_Score) along with target
+            drop_cols = [TARGET_COLUMN, 'id', 'Performance_Score']
+            input_feature_train_df = train_df.drop(columns=drop_cols, axis=1)
             target_feature_train_df = train_df[TARGET_COLUMN]
 
-            input_feature_test_df = test_df.drop(columns=[TARGET_COLUMN], axis=1)
+            input_feature_test_df = test_df.drop(columns=drop_cols, axis=1)
             target_feature_test_df = test_df[TARGET_COLUMN]
             logging.info("Input and Target cols defined for both train and test df.")
 
