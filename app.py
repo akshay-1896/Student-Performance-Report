@@ -24,6 +24,7 @@ import ast
 import pandas as pd
 import pickle
 from dotenv import load_dotenv
+from pathlib import Path
 
 # Load environment variables from .env file
 load_dotenv()
@@ -46,7 +47,8 @@ app = FastAPI(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Set up Jinja2 template engine for rendering HTML templates
-templates = Jinja2Templates(directory='templates')
+BASE_DIR = Path(__file__).resolve().parent
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 # Allow all origins for Cross-Origin Resource Sharing (CORS)
 origins = ["*"]
@@ -242,6 +244,7 @@ class DataForm:
 @app.get("/", tags=["prediction"])
 async def index(request: Request):
     """Renders the main HTML form page for student data input."""
+    print(type("studentdata.html"))
     history = load_history()
     return templates.TemplateResponse(
         "studentdata.html",
