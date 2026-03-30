@@ -10,8 +10,22 @@
     },
     "prediction": "PASS",
     "probability": "100.0%",
-    "timestamp": "2026-03-30 18:22:38",
-    "_id": "69ca7216a0912f8b4e43204a"
+    "timestamp": "2026-03-30 18:25:50",
+    "_id": "69ca72d61223e047c2d24c78"
+  },
+  {
+    "_id": "69ca72d61223e047c2d24c78",
+    "input": {
+      "Study_Hours": 5.0,
+      "Sleep_Hours": 6.0,
+      "Attendance_Percentage": 75.0,
+      "Previous_Score": 65.0,
+      "Internet_Usage": 4.0,
+      "Social_Activity_Level": 3
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-03-30 18:25:50"
   },
   {
     "_id": "69ca7216a0912f8b4e43204a",
