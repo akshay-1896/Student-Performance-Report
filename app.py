@@ -25,7 +25,7 @@ import pandas as pd
 import pickle
 from dotenv import load_dotenv
 from pathlib import Path
-
+from jinja2 import Environment, FileSystemLoader
 # Load environment variables from .env file
 load_dotenv()
 
@@ -48,7 +48,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Set up Jinja2 template engine for rendering HTML templates
 BASE_DIR = Path(__file__).resolve().parent
-templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+env = Environment(loader=FileSystemLoader(str(BASE_DIR / "templates")))
 
 # Allow all origins for Cross-Origin Resource Sharing (CORS)
 origins = ["*"]
@@ -246,15 +246,16 @@ async def index(request: Request):
     """Renders the main HTML form page for student data input."""
     
     history = load_history()
-    return templates.TemplateResponse(
-        request,
-        'studentdata.html',
-        {
-            "context": "Enter student details to predict performance",
-            "history": history,
-            "chart_data": json.dumps(history[:10]) if history else "[]"
-        }
+    template = env.get_template("studentdata.html")
+
+    html_content = template.render(
+        request=request,
+        context="Enter student details to predict performance",
+        history=history,
+        chart_data=json.dumps(history[:10]) if history else "[]"
     )
+
+    return HTMLResponse(content=html_content)
 
 
 # Route to trigger the model training process
