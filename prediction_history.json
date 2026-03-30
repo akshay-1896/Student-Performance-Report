@@ -1,0 +1,198 @@
+[
+  {
+    "input": {
+      "Study_Hours": 5.0,
+      "Sleep_Hours": 6.0,
+      "Attendance_Percentage": 75.0,
+      "Previous_Score": 65.0,
+      "Internet_Usage": 4.0,
+      "Social_Activity_Level": 3
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-03-30 18:22:38",
+    "_id": "69ca7216a0912f8b4e43204a"
+  },
+  {
+    "_id": "69ca7216a0912f8b4e43204a",
+    "input": {
+      "Study_Hours": 5.0,
+      "Sleep_Hours": 6.0,
+      "Attendance_Percentage": 75.0,
+      "Previous_Score": 65.0,
+      "Internet_Usage": 4.0,
+      "Social_Activity_Level": 3
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-03-30 18:22:38"
+  },
+  {
+    "_id": "69ca71aca0912f8b4e432049",
+    "input": {
+      "Study_Hours": 5.0,
+      "Sleep_Hours": 6.0,
+      "Attendance_Percentage": 75.0,
+      "Previous_Score": 65.0,
+      "Internet_Usage": 4.0,
+      "Social_Activity_Level": 3
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-03-30 18:20:52"
+  },
+  {
+    "_id": "69ca717fa0912f8b4e432048",
+    "input": {
+      "Study_Hours": 5.0,
+      "Sleep_Hours": 6.0,
+      "Attendance_Percentage": 75.0,
+      "Previous_Score": 65.0,
+      "Internet_Usage": 4.0,
+      "Social_Activity_Level": 3
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-03-30 18:20:07"
+  },
+  {
+    "_id": "69ca7155a0912f8b4e432047",
+    "input": {
+      "Study_Hours": 6.0,
+      "Sleep_Hours": 8.0,
+      "Attendance_Percentage": 90.0,
+      "Previous_Score": 80.0,
+      "Internet_Usage": 2.0,
+      "Social_Activity_Level": 2
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-03-30 18:19:25"
+  },
+  {
+    "_id": "69ca7134a0912f8b4e432046",
+    "input": {
+      "Study_Hours": 8.0,
+      "Sleep_Hours": 7.0,
+      "Attendance_Percentage": 85.0,
+      "Previous_Score": 75.0,
+      "Internet_Usage": 3.0,
+      "Social_Activity_Level": 2
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-03-30 18:18:52"
+  },
+  {
+    "_id": "69ca38a653a18b817e4bc5bc",
+    "input": {
+      "Study_Hours": 8.0,
+      "Sleep_Hours": 9.0,
+      "Attendance_Percentage": 56.0,
+      "Previous_Score": 45.0,
+      "Internet_Usage": 5.0,
+      "Social_Activity_Level": 2
+    },
+    "prediction": "PASS",
+    "probability": "91.6%",
+    "timestamp": "2026-03-30 14:17:34"
+  },
+  {
+    "_id": "69ca1d5953a18b817e4bc5bb",
+    "input": {
+      "Study_Hours": 8.0,
+      "Sleep_Hours": 10.0,
+      "Attendance_Percentage": 70.0,
+      "Previous_Score": 70.0,
+      "Internet_Usage": 6.0,
+      "Social_Activity_Level": 4
+    },
+    "prediction": "PASS",
+    "probability": "98.7%",
+    "timestamp": "2026-03-30 12:21:05"
+  },
+  {
+    "_id": "69ca1cfa53a18b817e4bc5ba",
+    "input": {
+      "Study_Hours": 8.0,
+      "Sleep_Hours": 8.0,
+      "Attendance_Percentage": 88.0,
+      "Previous_Score": 85.0,
+      "Internet_Usage": 4.0,
+      "Social_Activity_Level": 3
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-03-30 12:19:30"
+  },
+  {
+    "_id": "69ca1c1f53a18b817e4bc5b9",
+    "input": {
+      "Study_Hours": 5.0,
+      "Sleep_Hours": 6.0,
+      "Attendance_Percentage": 75.0,
+      "Previous_Score": 65.0,
+      "Internet_Usage": 4.0,
+      "Social_Activity_Level": 3
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-03-30 12:15:51"
+  },
+  {
+    "_id": "69ca1c1a53a18b817e4bc5b8",
+    "input": {
+      "Study_Hours": 2.0,
+      "Sleep_Hours": 5.0,
+      "Attendance_Percentage": 60.0,
+      "Previous_Score": 40.0,
+      "Internet_Usage": 8.0,
+      "Social_Activity_Level": 5
+    },
+    "prediction": "FAIL",
+    "probability": "98.9%",
+    "timestamp": "2026-03-30 12:15:46"
+  },
+  {
+    "_id": "69ca1c1453a18b817e4bc5b7",
+    "input": {
+      "Study_Hours": 8.0,
+      "Sleep_Hours": 7.0,
+      "Attendance_Percentage": 85.0,
+      "Previous_Score": 75.0,
+      "Internet_Usage": 3.0,
+      "Social_Activity_Level": 2
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-03-30 12:15:40"
+  },
+  {
+    "_id": "69ca1ba03a1e6fc1b1a7bf83",
+    "input": {
+      "Study_Hours": 8.0,
+      "Sleep_Hours": 7.0,
+      "Attendance_Percentage": 85.0,
+      "Previous_Score": 75.0,
+      "Internet_Usage": 3.0,
+      "Social_Activity_Level": 2
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-03-30 12:13:44"
+  },
+  {
+    "_id": "69ca1b41145d30bce32d7a3c",
+    "input": {
+      "Study_Hours": 8.0,
+      "Sleep_Hours": 7.0,
+      "Attendance_Percentage": 85.0,
+      "Previous_Score": 75.0,
+      "Internet_Usage": 3.0,
+      "Social_Activity_Level": 2
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-03-30 12:12:09"
+  }
+]

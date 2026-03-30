@@ -11,7 +11,7 @@ Features:
 
 from fastapi import FastAPI, Request, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from uvicorn import run as app_run
@@ -25,7 +25,7 @@ import pandas as pd
 import pickle
 from dotenv import load_dotenv
 from pathlib import Path
-from jinja2 import Environment, FileSystemLoader
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -48,7 +48,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Set up Jinja2 template engine for rendering HTML templates
 BASE_DIR = Path(__file__).resolve().parent
-env = Environment(loader=FileSystemLoader(str(BASE_DIR / "templates")))
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 # Allow all origins for Cross-Origin Resource Sharing (CORS)
 origins = ["*"]
@@ -133,12 +133,20 @@ def add_to_history(input_data, prediction, probability):
 
 def save_history_local(entry):
     """Save prediction to local JSON file (fallback)"""
-    # Make a copy and ensure timestamp is a string
-    entry_copy = convert_to_serializable(entry)
-    history = load_history()
-    entry_with_ts = entry.copy()
+    # Ensure entry is a dict
+    if isinstance(entry, dict):
+        entry_with_ts = entry.copy()
+    else:
+        entry_with_ts = {"input": entry}
+
     if "timestamp" not in entry_with_ts:
         entry_with_ts["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # Load history and ensure it's a list
+    history = load_history()
+    if not isinstance(history, list):
+        history = []
+
     history.insert(0, entry_with_ts)
     history = history[:50]
     save_history(history)
@@ -148,22 +156,22 @@ class DataForm:
     """DataForm class to handle and process incoming form data."""
     def __init__(self, request: Request):
         self.request: Request = request
-        self.Study_Hours: Optional[float] = None
-        self.Sleep_Hours: Optional[float] = None
-        self.Attendance_Percentage: Optional[float] = None
-        self.Previous_Score: Optional[float] = None
-        self.Internet_Usage: Optional[float] = None
-        self.Social_Activity_Level: Optional[int] = None
+        self.Study_Hours: Optional[str] = None
+        self.Sleep_Hours: Optional[str] = None
+        self.Attendance_Percentage: Optional[str] = None
+        self.Previous_Score: Optional[str] = None
+        self.Internet_Usage: Optional[str] = None
+        self.Social_Activity_Level: Optional[str] = None
 
     async def get_student_data(self):
         """Method to retrieve and assign form data to class attributes."""
         form = await self.request.form()
-        self.Study_Hours = form.get("Study_Hours")
-        self.Sleep_Hours = form.get("Sleep_Hours")
-        self.Attendance_Percentage = form.get("Attendance_Percentage")
-        self.Previous_Score = form.get("Previous_Score")
-        self.Internet_Usage = form.get("Internet_Usage")
-        self.Social_Activity_Level = form.get("Social_Activity_Level")
+        self.Study_Hours = str(form.get("Study_Hours") or "")
+        self.Sleep_Hours = str(form.get("Sleep_Hours") or "")
+        self.Attendance_Percentage = str(form.get("Attendance_Percentage") or "")
+        self.Previous_Score = str(form.get("Previous_Score") or "")
+        self.Internet_Usage = str(form.get("Internet_Usage") or "")
+        self.Social_Activity_Level = str(form.get("Social_Activity_Level") or "")
 
     def validate(self) -> tuple:
         """Validate input data and return (is_valid, error_message)"""
@@ -246,16 +254,16 @@ async def index(request: Request):
     """Renders the main HTML form page for student data input."""
     
     history = load_history()
-    template = env.get_template("studentdata.html")
+    return templates.TemplateResponse(
 
-    html_content = template.render(
-        request=request,
-        context="Enter student details to predict performance",
-        history=history,
-        chart_data=json.dumps(history[:10]) if history else "[]"
-    )
-
-    return HTMLResponse(content=html_content)
+        name='studentdata.html',
+        context={
+            "request":request,
+            "context": "Enter student details to predict performance",
+            "history": history,
+            "chart_data": json.dumps(history[:10]) if history else "[]"
+        }
+        )
 
 
 # Route to trigger the model training process
@@ -265,9 +273,9 @@ async def trainRouteClient():
     try:
         train_pipeline = TrainPipeline()
         train_pipeline.run_pipeline()
-        return Response("Training successful!!!")
+        return PlainTextResponse("Training successful!!!")
     except Exception as e:
-        return Response(f"Error Occurred! {e}")
+        return PlainTextResponse(f"Error Occurred! {e}")
 
 
 # Route to handle form submission and make predictions
@@ -286,13 +294,13 @@ async def predictRouteClient(request: Request):
                 content={"status": False, "error": error_msg}
             )
 
-        # Convert to float
-        study_hours = float(form.Study_Hours)
-        sleep_hours = float(form.Sleep_Hours)
-        attendance = float(form.Attendance_Percentage)
-        previous_score = float(form.Previous_Score)
-        internet_usage = float(form.Internet_Usage)
-        social_activity = int(form.Social_Activity_Level)
+        # Convert to float/int with proper handling
+        study_hours = float(form.Study_Hours) if form.Study_Hours else 0.0
+        sleep_hours = float(form.Sleep_Hours) if form.Sleep_Hours else 0.0
+        attendance = float(form.Attendance_Percentage) if form.Attendance_Percentage else 0.0
+        previous_score = float(form.Previous_Score) if form.Previous_Score else 0.0
+        internet_usage = float(form.Internet_Usage) if form.Internet_Usage else 0.0
+        social_activity = int(form.Social_Activity_Level) if form.Social_Activity_Level else 1
 
         student_data = StudentData(
             Study_Hours=study_hours,
