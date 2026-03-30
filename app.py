@@ -47,8 +47,7 @@ app = FastAPI(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Set up Jinja2 template engine for rendering HTML templates
-BASE_DIR = Path(__file__).resolve().parent
-templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+templates = Jinja2Templates(directory="templates")
 
 # Allow all origins for Cross-Origin Resource Sharing (CORS)
 origins = ["*"]
