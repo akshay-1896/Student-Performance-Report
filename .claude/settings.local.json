@@ -12,7 +12,10 @@
       "Bash(curl:*)",
       "Bash(taskkill //F //PID 24560)",
       "Bash(taskkill //F //PID 28604)",
-      "Bash(taskkill //F //PID 4992)"
+      "Bash(taskkill //F //PID 4992)",
+      "Bash(pip list:*)",
+      "Bash(findstr /R \"fastapi uvicorn pymongo pandas scikit\")",
+      "Bash(cd:*)"
     ]
   }
 }

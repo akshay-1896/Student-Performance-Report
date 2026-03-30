@@ -10,6 +10,7 @@ from datetime import datetime
 import pymongo
 import certifi
 from typing import List, Dict, Any, Optional
+from bson import ObjectId
 
 from src.exception import MyException
 from src.logger import logging
@@ -100,10 +101,13 @@ class MongoDBHandler:
                              .sort("timestamp", -1)
                              .limit(limit))
 
-            # Convert ObjectId to string for JSON serialization
+            # Convert ObjectId and datetime to string for JSON serialization
             for pred in predictions:
                 if "_id" in pred:
                     pred["_id"] = str(pred["_id"])
+                # Convert datetime to string
+                if "timestamp" in pred and isinstance(pred["timestamp"], datetime):
+                    pred["timestamp"] = pred["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
 
             return predictions
 

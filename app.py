@@ -19,6 +19,8 @@ from typing import Optional
 import os
 import json
 from datetime import datetime
+from bson import ObjectId
+import ast
 import pandas as pd
 import pickle
 from dotenv import load_dotenv
@@ -62,30 +64,46 @@ app.add_middleware(
 HISTORY_FILE = "prediction_history.json"
 
 
+def convert_to_serializable(obj):
+    """Convert objects that are not JSON serializable to serializable types."""
+    if isinstance(obj, datetime):
+        return obj.strftime("%Y-%m-%d %H:%M:%S")
+    elif isinstance(obj, ObjectId):
+        return str(obj)
+    elif isinstance(obj, dict):
+        return {k: convert_to_serializable(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_to_serializable(item) for item in obj]
+    return obj
+
+
 def load_history():
     """Load prediction history - tries MongoDB first, falls back to file"""
-    # Try MongoDB first
-    mongodb = get_mongodb_handler()
-    if mongodb.is_connected():
-        history = mongodb.get_prediction_history(limit=50)
-        if history:
-            # Format for display
-            for item in history:
-                if "timestamp" in item and hasattr(item["timestamp"], "str"):
-                    item["timestamp"] = item["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
-            return history
+    try:
+        # Try MongoDB first
+        mongodb = get_mongodb_handler()
+        if mongodb.is_connected():
+            history = mongodb.get_prediction_history(limit=50)
+            if history:
+                # Format for display - convert all non-serializable objects
+                return convert_to_serializable(history)
 
-    # Fall back to local file
-    if os.path.exists(HISTORY_FILE):
-        with open(HISTORY_FILE, 'r') as f:
-            return json.load(f)
+        # Fall back to local file
+        if os.path.exists(HISTORY_FILE):
+            with open(HISTORY_FILE, 'r') as f:
+                history = json.load(f)
+                return convert_to_serializable(history)
+    except Exception as e:
+        logging.error(f"Error loading history: {e}")
     return []
 
 
 def save_history(history):
     """Save prediction history to JSON file"""
+    # Ensure all objects are JSON serializable
+    serializable_history = convert_to_serializable(history)
     with open(HISTORY_FILE, 'w') as f:
-        json.dump(history, f, indent=2)
+        json.dump(serializable_history, f, indent=2)
 
 
 def add_to_history(input_data, prediction, probability):
@@ -113,6 +131,8 @@ def add_to_history(input_data, prediction, probability):
 
 def save_history_local(entry):
     """Save prediction to local JSON file (fallback)"""
+    # Make a copy and ensure timestamp is a string
+    entry_copy = convert_to_serializable(entry)
     history = load_history()
     entry_with_ts = entry.copy()
     if "timestamp" not in entry_with_ts:
