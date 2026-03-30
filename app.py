@@ -244,16 +244,10 @@ class DataForm:
 @app.get("/", tags=["prediction"])
 async def index(request: Request):
     """Renders the main HTML form page for student data input."""
-    template_name = "studentdata.html"
-
-    print("TEMPLATE NAME:", template_name)
-    print("TYPE:", type(template_name))
-    print("TEMPLATES OBJECT:", templates)
-    print("TYPE OF templates:", type(templates))
-
+    
     history = load_history()
     return templates.TemplateResponse(
-        template_name,
+        'studentdata.html',
         {
             "request": request,
             "context": "Enter student details to predict performance",
