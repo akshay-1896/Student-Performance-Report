@@ -15,7 +15,8 @@
       "Bash(taskkill //F //PID 4992)",
       "Bash(pip list:*)",
       "Bash(findstr /R \"fastapi uvicorn pymongo pandas scikit\")",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(chmod:*)"
     ]
   }
 }

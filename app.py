@@ -85,7 +85,7 @@ def load_history():
         mongodb = get_mongodb_handler()
         if mongodb.is_connected():
             history = mongodb.get_prediction_history(limit=50)
-            if history:
+            if history and isinstance(history, list):
                 # Format for display - convert all non-serializable objects
                 return convert_to_serializable(history)
 
@@ -93,7 +93,8 @@ def load_history():
         if os.path.exists(HISTORY_FILE):
             with open(HISTORY_FILE, 'r') as f:
                 history = json.load(f)
-                return convert_to_serializable(history)
+                if isinstance(history, list):
+                    return convert_to_serializable(history)
     except Exception as e:
         logging.error(f"Error loading history: {e}")
     return []
@@ -101,6 +102,9 @@ def load_history():
 
 def save_history(history):
     """Save prediction history to JSON file"""
+    # Ensure history is a list
+    if not isinstance(history, list):
+        history = []
     # Ensure all objects are JSON serializable
     serializable_history = convert_to_serializable(history)
     with open(HISTORY_FILE, 'w') as f:
