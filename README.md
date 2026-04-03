@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10-blue.svg" />
   <img src="https://img.shields.io/badge/Database-MongoDB-green.svg" />
-  <img src="https://img.shields.io/badge/Cloud-AWS-orange.svg" />
+  <img src="https://img.shields.io/badge/Cloud-Railway-orange.svg" />
   <img src="https://img.shields.io/badge/Container-Docker-blue.svg" />
   <img src="https://img.shields.io/badge/CI/CD-GitHub%20Actions-black.svg" />
 </p>
