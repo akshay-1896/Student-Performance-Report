@@ -256,14 +256,11 @@ class DataForm:
 async def index(request: Request):
     """Renders the main HTML form page for student data input."""
 
-    history = load_history()
     return templates.TemplateResponse(
         "studentdata.html",
         {
             "request": request,
             "context": "Enter student details to predict performance",
-            "history": history,
-            "chart_data": json.dumps(history[:10]) if history else "[]"
         }
     )
 
