@@ -1,17 +1,87 @@
 [
   {
     "input": {
-      "Study_Hours": 3.0,
-      "Sleep_Hours": 5.0,
-      "Attendance_Percentage": 60.0,
-      "Previous_Score": 50.0,
-      "Internet_Usage": 6.0,
-      "Social_Activity_Level": 4
+      "Study_Hours": 2.0,
+      "Sleep_Hours": 6.0,
+      "Attendance_Percentage": 50.0,
+      "Previous_Score": 40.0,
+      "Internet_Usage": 8.0,
+      "Social_Activity_Level": 5
     },
     "prediction": "FAIL",
-    "probability": "95.9%",
-    "timestamp": "2026-03-30 18:32:49",
-    "_id": "69ca74790ca8c318ad63f5b7"
+    "probability": "50.0%",
+    "timestamp": "2026-04-03 16:04:06",
+    "_id": "69cf979e5fa2d082ddb10595"
+  },
+  {
+    "_id": "69cf979e5fa2d082ddb10595",
+    "input": {
+      "Study_Hours": 2.0,
+      "Sleep_Hours": 6.0,
+      "Attendance_Percentage": 50.0,
+      "Previous_Score": 40.0,
+      "Internet_Usage": 8.0,
+      "Social_Activity_Level": 5
+    },
+    "prediction": "FAIL",
+    "probability": "50.0%",
+    "timestamp": "2026-04-03 16:04:06"
+  },
+  {
+    "_id": "69cf9792a072455dcd0a177b",
+    "input": {
+      "Study_Hours": 6.0,
+      "Sleep_Hours": 7.0,
+      "Attendance_Percentage": 85.0,
+      "Previous_Score": 75.0,
+      "Internet_Usage": 3.0,
+      "Social_Activity_Level": 3
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-04-03 16:03:54"
+  },
+  {
+    "_id": "69cf751eeca597b023f2e811",
+    "input": {
+      "Study_Hours": 6.0,
+      "Sleep_Hours": 7.0,
+      "Attendance_Percentage": 85.0,
+      "Previous_Score": 75.0,
+      "Internet_Usage": 3.0,
+      "Social_Activity_Level": 3
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-04-03 13:36:54"
+  },
+  {
+    "_id": "69cf73d54b21a2989250373f",
+    "input": {
+      "Study_Hours": 2.0,
+      "Sleep_Hours": 6.0,
+      "Attendance_Percentage": 50.0,
+      "Previous_Score": 40.0,
+      "Internet_Usage": 8.0,
+      "Social_Activity_Level": 5
+    },
+    "prediction": "FAIL",
+    "probability": "98.9%",
+    "timestamp": "2026-04-03 13:31:25"
+  },
+  {
+    "_id": "69cf73b64f1d936f624bc561",
+    "input": {
+      "Study_Hours": 6.0,
+      "Sleep_Hours": 7.0,
+      "Attendance_Percentage": 85.0,
+      "Previous_Score": 75.0,
+      "Internet_Usage": 3.0,
+      "Social_Activity_Level": 3
+    },
+    "prediction": "PASS",
+    "probability": "100.0%",
+    "timestamp": "2026-04-03 13:30:54"
   },
   {
     "_id": "69ca74790ca8c318ad63f5b7",
