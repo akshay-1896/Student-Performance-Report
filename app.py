@@ -257,11 +257,9 @@ async def index(request: Request):
     """Renders the main HTML form page for student data input."""
 
     return templates.TemplateResponse(
-        name="studentdata.html",
-        context={
-            "request": request,
-            "context": "Enter student details to predict performance",
-        }
+        request,
+        "studentdata.html",
+        {"context": "Enter student details to predict performance"}
     )
 
 
