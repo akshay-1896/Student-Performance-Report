@@ -145,20 +145,44 @@
 
         .feature-list {
             display: grid;
-            grid-template-columns: 180px auto;
-            gap: 8px 15px;
+            grid-template-columns: 170px 1fr;
+            column-gap: 25px;
+            row-gap: 10px;
             margin: 15px 0;
+            padding-left: 10px;
         }
 
         .feature-list dt {
             font-weight: 600;
             color: #333;
             text-align: right;
+            white-space: nowrap;
+            padding: 2px 8px 2px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tab-content h4 {
+            margin: 20px 0 10px 0;
+            color: #667eea;
+            font-size: 16px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+
+        .tab-content h4:first-of-type {
+            margin-top: 0;
+        }
+
+        .tab-content p {
+            color: #555;
+            line-height: 1.6;
         }
 
         .feature-list dd {
             margin: 0;
             color: #555;
+            padding: 2px 0;
         }
 
         .feature-list dt::after {
@@ -192,13 +216,49 @@
 
         .input-group {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: 180px 200px;
+            column-gap: 15px;
+            row-gap: 12px;
+            align-items: center;
+            justify-items: stretch;
+            padding-left: 10px;
+            width: fit-content;
         }
 
-        @media (max-width: 600px) {
+        .input-group .form-field {
+            display: contents;
+        }
+
+        .input-group label {
+            text-align: right;
+            justify-self: end;
+            white-space: nowrap;
+            padding-right: 8px;
+            min-width: 170px;
+        }
+
+        .input-group input {
+            width: 200px;
+            box-sizing: border-box;
+            text-align: left;
+            justify-self: start;
+        }
+
+        @media (max-width: 500px) {
             .input-group {
                 grid-template-columns: 1fr;
+                justify-items: stretch;
+                width: 100%;
+            }
+            .input-group label {
+                text-align: left;
+                justify-self: start;
+                padding-right: 0;
+                padding-bottom: 5px;
+            }
+            .input-group input {
+                width: 100%;
+                justify-self: stretch;
             }
             .prediction-result {
                 flex-direction: column;
@@ -223,33 +283,33 @@
         <div id="predict-tab" class="tab-content active">
             <form id="predictionForm">
                 <div class="input-group">
-                    <div>
-                        <label for="Study_Hours">Study Hours (per day):</label>
+                    <div class="form-field">
+                        <label for="Study_Hours">Study Hours (per day)</label>
                         <input type="number" id="Study_Hours" name="Study_Hours" step="0.1" min="0" max="24" placeholder="e.g., 4.5" required>
                     </div>
 
-                    <div>
-                        <label for="Sleep_Hours">Sleep Hours (per day):</label>
+                    <div class="form-field">
+                        <label for="Sleep_Hours">Sleep Hours (per day)</label>
                         <input type="number" id="Sleep_Hours" name="Sleep_Hours" step="0.1" min="0" max="24" placeholder="e.g., 7.0" required>
                     </div>
 
-                    <div>
-                        <label for="Attendance_Percentage">Attendance Percentage:</label>
+                    <div class="form-field">
+                        <label for="Attendance_Percentage">Attendance Percentage</label>
                         <input type="number" id="Attendance_Percentage" name="Attendance_Percentage" step="0.1" min="0" max="100" placeholder="e.g., 85.5" required>
                     </div>
 
-                    <div>
-                        <label for="Previous_Score">Previous Score (%):</label>
+                    <div class="form-field">
+                        <label for="Previous_Score">Previous Score (%)</label>
                         <input type="number" id="Previous_Score" name="Previous_Score" step="0.1" min="0" max="100" placeholder="e.g., 72.0" required>
                     </div>
 
-                    <div>
-                        <label for="Internet_Usage">Internet Usage (hours per day):</label>
+                    <div class="form-field">
+                        <label for="Internet_Usage">Internet Usage (hours per day)</label>
                         <input type="number" id="Internet_Usage" name="Internet_Usage" step="0.1" min="0" max="24" placeholder="e.g., 3.5" required>
                     </div>
 
-                    <div>
-                        <label for="Social_Activity_Level">Social Activity Level (1-5):</label>
+                    <div class="form-field">
+                        <label for="Social_Activity_Level">Social Activity Level (1-5)</label>
                         <input type="number" id="Social_Activity_Level" name="Social_Activity_Level" min="1" max="5" placeholder="e.g., 3" required>
                     </div>
                 </div>
@@ -312,32 +372,113 @@
 
         <!-- About Tab -->
         <div id="about-tab" class="tab-content">
-            <h3>About This Model</h3>
+            <h3>About This Project</h3>
             <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <h4>Project Overview:</h4>
+                <p style="color: #555; line-height: 1.6; margin-bottom: 15px;">
+                    This is an end-to-end Machine Learning application for predicting student academic performance.
+                    Built with MLOps best practices, it uses a Random Forest Classifier to predict whether a student
+                    will PASS or FAIL based on various lifestyle and academic factors. The application features
+                    interactive web interface, prediction history tracking, and cloud integration.
+                </p>
+
+                <h4>Tech Stack:</h4>
+                <dl class="feature-list">
+                    <dt>Language</dt>
+                    <dd>Python 3.10</dd>
+                    <dt>Web Framework</dt>
+                    <dd>FastAPI</dd>
+                    <dt>ML Framework</dt>
+                    <dd>Scikit-learn</dd>
+                    <dt>Database</dt>
+                    <dd>MongoDB Atlas (optional)</dd>
+                    <dt>Cloud Storage</dt>
+                    <dd>AWS S3</dd>
+                    <dt>Container</dt>
+                    <dd>Docker & docker-compose</dd>
+                    <dt>CI/CD</dt>
+                    <dd>GitHub Actions</dd>
+                </dl>
+
+                <h4>ML Pipeline:</h4>
+                <dl class="feature-list">
+                    <dt>Data Ingestion</dt>
+                    <dd>Load train/test data from CSV files</dd>
+                    <dt>Data Validation</dt>
+                    <dd>Validate schema and data quality</dd>
+                    <dt>Data Transformation</dt>
+                    <dd>Preprocessing & feature engineering</dd>
+                    <dt>Model Training</dt>
+                    <dd>Train Random Forest Classifier</dd>
+                    <dt>Model Evaluation</dt>
+                    <dd>Assess model performance</dd>
+                    <dt>Model Pusher</dt>
+                    <dd>Push model to AWS S3</dd>
+                </dl>
+
                 <h4>Features Used:</h4>
                 <dl class="feature-list">
                     <dt>Study Hours</dt>
-                    <dd>Daily study time</dd>
+                    <dd>Daily study time (0-24 hours)</dd>
                     <dt>Sleep Hours</dt>
-                    <dd>Daily sleep duration</dd>
+                    <dd>Daily sleep duration (0-24 hours)</dd>
                     <dt>Attendance Percentage</dt>
-                    <dd>Class attendance rate</dd>
+                    <dd>Class attendance rate (0-100%)</dd>
                     <dt>Previous Score</dt>
-                    <dd>Prior exam performance</dd>
+                    <dd>Prior exam performance (0-100%)</dd>
                     <dt>Internet Usage</dt>
-                    <dd>Daily internet hours</dd>
+                    <dd>Daily internet hours (0-24 hours)</dd>
                     <dt>Social Activity Level</dt>
-                    <dd>Social engagement (1-5)</dd>
+                    <dd>Social engagement scale (1-5)</dd>
                 </dl>
+
                 <h4>Output:</h4>
                 <dl class="feature-list">
                     <dt>PASS</dt>
-                    <dd>Student is predicted to pass (score &gt;= 40%)</dd>
+                    <dd>Student predicted to pass (probability &gt;= 40%)</dd>
                     <dt>FAIL</dt>
-                    <dd>Student is predicted to fail (score &lt; 40%)</dd>
+                    <dd>Student predicted to fail (probability &lt; 40%)</dd>
                 </dl>
-                <h4>Model:</h4>
-                <p>Random Forest Classifier with SMOTEENN for handling imbalanced data.</p>
+
+                <h4>Model Details:</h4>
+                <dl class="feature-list">
+                    <dt>Algorithm</dt>
+                    <dd>Random Forest Classifier</dd>
+                    <dt>Imbalanced Data</dt>
+                    <dd>SMOTEENN (combination of SMOTE &amp; ENN)</dd>
+                    <dt>Data Size</dt>
+                    <dd>15,000+ synthetic student records</dd>
+                    <dt>Training Set</dt>
+                    <dd>12,006 records</dd>
+                    <dt>Test Set</dt>
+                    <dd>3,001 records</dd>
+                </dl>
+
+                <h4>Deployment:</h4>
+                <dl class="feature-list">
+                    <dt>Local Run</dt>
+                    <dd>python app.py (localhost:5000)</dd>
+                    <dt>Docker</dt>
+                    <dd>docker build &amp;&amp; docker run</dd>
+                    <dt>Cloud Platform</dt>
+                    <dd>Railway (recommended)</dd>
+                </dl>
+
+                <h4>API Endpoints:</h4>
+                <dl class="feature-list">
+                    <dt>/</dt>
+                    <dd>Main prediction form</dd>
+                    <dt>/predict</dt>
+                    <dd>Make prediction (POST)</dd>
+                    <dt>/history</dt>
+                    <dd>Get prediction history</dd>
+                    <dt>/train</dt>
+                    <dd>Train model</dd>
+                    <dt>/health</dt>
+                    <dd>Health check</dd>
+                    <dt>/model/status</dt>
+                    <dd>Check model status</dd>
+                </dl>
             </div>
         </div>
 
