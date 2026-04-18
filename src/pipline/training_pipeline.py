@@ -46,7 +46,7 @@ class TrainPipeline:
             logging.info("Exited the start_data_ingestion method of TrainPipeline class")
             return data_ingestion_artifact
         except Exception as e:
-            raise MyException(e, sys)
+            raise MyException(e, sys) # type: ignore
 
     def start_data_validation(self, data_ingestion_artifact: DataIngestionArtifact) -> DataValidationArtifact:
         """

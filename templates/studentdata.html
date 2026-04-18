@@ -143,6 +143,28 @@
             padding: 20px;
         }
 
+        .feature-list {
+            display: grid;
+            grid-template-columns: 180px auto;
+            gap: 8px 15px;
+            margin: 15px 0;
+        }
+
+        .feature-list dt {
+            font-weight: 600;
+            color: #333;
+            text-align: right;
+        }
+
+        .feature-list dd {
+            margin: 0;
+            color: #555;
+        }
+
+        .feature-list dt::after {
+            content: ":";
+        }
+
         .loading::after {
             content: '';
             display: inline-block;
@@ -293,19 +315,27 @@
             <h3>About This Model</h3>
             <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
                 <h4>Features Used:</h4>
-                <ul>
-                    <li><strong>Study Hours:</strong> Daily study time</li>
-                    <li><strong>Sleep Hours:</strong> Daily sleep duration</li>
-                    <li><strong>Attendance Percentage:</strong> Class attendance rate</li>
-                    <li><strong>Previous Score:</strong> Prior exam performance</li>
-                    <li><strong>Internet Usage:</strong> Daily internet hours</li>
-                    <li><strong>Social Activity Level:</strong> Social engagement (1-5)</li>
-                </ul>
+                <dl class="feature-list">
+                    <dt>Study Hours</dt>
+                    <dd>Daily study time</dd>
+                    <dt>Sleep Hours</dt>
+                    <dd>Daily sleep duration</dd>
+                    <dt>Attendance Percentage</dt>
+                    <dd>Class attendance rate</dd>
+                    <dt>Previous Score</dt>
+                    <dd>Prior exam performance</dd>
+                    <dt>Internet Usage</dt>
+                    <dd>Daily internet hours</dd>
+                    <dt>Social Activity Level</dt>
+                    <dd>Social engagement (1-5)</dd>
+                </dl>
                 <h4>Output:</h4>
-                <ul>
-                    <li><strong>PASS:</strong> Student is predicted to pass (score >= 40%)</li>
-                    <li><strong>FAIL:</strong> Student is predicted to fail (score < 40%)</li>
-                </ul>
+                <dl class="feature-list">
+                    <dt>PASS</dt>
+                    <dd>Student is predicted to pass (score &gt;= 40%)</dd>
+                    <dt>FAIL</dt>
+                    <dd>Student is predicted to fail (score &lt; 40%)</dd>
+                </dl>
                 <h4>Model:</h4>
                 <p>Random Forest Classifier with SMOTEENN for handling imbalanced data.</p>
             </div>
